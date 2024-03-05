@@ -1,9 +1,7 @@
 package com.japrova.fategrandorder.restcontroller;
 
 import com.japrova.fategrandorder.entity.Servant;
-import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import com.japrova.fategrandorder.service.ServantServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +12,6 @@ public class ServantRestController {
 
     private final ServantServiceImpl servantService;
 
-    @Autowired
     public ServantRestController(ServantServiceImpl servantService) {
         this.servantService = servantService;
     }
@@ -28,11 +25,6 @@ public class ServantRestController {
     @GetMapping("/servant/{name}")
     public Servant findName(@PathVariable String name) {
 
-        Servant servant =  servantService.findByName(name);
-
-        if (servant != null) {
-            return servant;
-        }
-        throw new ServantNotFound("SERVANT NOT FOUND");
+        return servantService.findByName(name);
     }
 }

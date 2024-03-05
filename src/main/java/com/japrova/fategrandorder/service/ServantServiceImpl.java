@@ -3,6 +3,7 @@ package com.japrova.fategrandorder.service;
 import com.japrova.fategrandorder.dao.DataJpaRepository;
 import com.japrova.fategrandorder.dao.ServantRepository;
 import com.japrova.fategrandorder.entity.Servant;
+import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ServantServiceImpl implements ServantService {
@@ -19,7 +19,6 @@ public class ServantServiceImpl implements ServantService {
 
     private final ServantRepository servantRepository;
 
-    @Autowired
     public ServantServiceImpl(DataJpaRepository dataJpaRepository, ServantRepository servantRepository) {
         this.dataJpaRepository = dataJpaRepository;
         this.servantRepository = servantRepository;
@@ -38,10 +37,10 @@ public class ServantServiceImpl implements ServantService {
 
         String nameServant = Arrays.stream(names)
                 .map(n -> n + " ")
-                .collect(Collectors.joining());
+                .collect(Collectors.joining()).trim();
 
         Optional<Servant> optionalServant = servantRepository.findByName(nameServant);
 
-        return optionalServant.orElse(null);
+        return optionalServant.orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND :: " + nameServant));
     }
 }
