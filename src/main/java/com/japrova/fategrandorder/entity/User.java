@@ -1,7 +1,6 @@
 package com.japrova.fategrandorder.entity;
 
 import jakarta.persistence.*;
-
 import java.util.Collection;
 
 @Entity
@@ -37,8 +36,7 @@ public class User {
         this.enabled = enabled;
     }
 
-    public User(String userName, String password, boolean enabled,
-                Collection<Role> roles) {
+    public User(String userName, String password, boolean enabled, Collection<Role> roles) {
         this.userName = userName;
         this.password = password;
         this.enabled = enabled;
@@ -85,4 +83,14 @@ public class User {
         this.roles = roles;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                ", roles=" + roles +
+                '}';
+    }
 }

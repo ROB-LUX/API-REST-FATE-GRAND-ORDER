@@ -4,7 +4,6 @@ import com.japrova.fategrandorder.dao.DataJpaRepository;
 import com.japrova.fategrandorder.dao.ServantRepository;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

@@ -3,12 +3,18 @@ package com.japrova.fategrandorder.dao;
 import com.japrova.fategrandorder.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserDaoImpl implements UserDao {
 
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
+    public UserDaoImpl() {
+    }
 
+    @Autowired
     public UserDaoImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

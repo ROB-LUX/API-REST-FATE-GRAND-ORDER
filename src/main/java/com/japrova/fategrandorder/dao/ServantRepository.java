@@ -7,10 +7,10 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-
-@Configuration
+@Repository
 public class ServantRepository {
 
     private EntityManager entityManager;
@@ -21,11 +21,6 @@ public class ServantRepository {
     }
 
     public ServantRepository() {
-    }
-
-    @Bean
-    public ServantRepository getServantRepository() {
-        return new ServantRepository();
     }
 
     public Optional<Servant> findByName(String name) {

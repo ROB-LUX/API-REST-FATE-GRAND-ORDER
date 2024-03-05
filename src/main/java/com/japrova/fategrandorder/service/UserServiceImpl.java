@@ -17,6 +17,10 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
 
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
     @Override
     public User findByUserName(String userName) {
         return userDao.findByUserName(userName);
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userDao.findByUserName(username);
 
+        System.out.println(user);
         if (user == null) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
