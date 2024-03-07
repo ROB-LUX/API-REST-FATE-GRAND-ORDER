@@ -11,10 +11,6 @@ public class UserDaoImpl implements UserDao {
 
     private EntityManager entityManager;
 
-    public UserDaoImpl() {
-    }
-
-    @Autowired
     public UserDaoImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

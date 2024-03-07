@@ -1,17 +1,17 @@
 package com.japrova.fategrandorder.dao;
 
 import com.japrova.fategrandorder.entity.Servant;
+import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
-public class ServantRepository {
+public class ServantRepository implements ServantDao {
 
     private EntityManager entityManager;
 
@@ -20,7 +20,15 @@ public class ServantRepository {
         this.entityManager = entityManager;
     }
 
-    public ServantRepository() {
+    @Override
+    public List<Servant> findAll() throws ServantNotFound {
+
+        String sql = "FROM Servant";
+
+        TypedQuery<Servant> servantTypedQuery = entityManager
+                .createQuery(sql, Servant.class);
+
+        return servantTypedQuery.getResultList();
     }
 
     public Optional<Servant> findByName(String name) {

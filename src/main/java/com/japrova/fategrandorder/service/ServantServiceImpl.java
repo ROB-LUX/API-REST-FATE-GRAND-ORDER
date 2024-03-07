@@ -1,32 +1,52 @@
 package com.japrova.fategrandorder.service;
 
-import com.japrova.fategrandorder.dao.DataJpaRepository;
+import com.japrova.fategrandorder.dao.ServantDao;
 import com.japrova.fategrandorder.dao.ServantRepository;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ServantServiceImpl implements ServantService {
 
-    private final DataJpaRepository dataJpaRepository;
+    private final ServantDao servantDao;
 
     private final ServantRepository servantRepository;
 
-    public ServantServiceImpl(DataJpaRepository dataJpaRepository, ServantRepository servantRepository) {
-        this.dataJpaRepository = dataJpaRepository;
+    public ServantServiceImpl(ServantDao servantDao, ServantRepository servantRepository) {
+        this.servantDao = servantDao;
         this.servantRepository = servantRepository;
     }
 
     @Override
-    public List<Servant> findAll() {
+    public List<Map<String, String>> findAll() {
 
-        return dataJpaRepository.findAll();
+        try {
+            List<Servant> servantList = servantDao.findAll();
+
+            // To avoid displaying sensitive data such as ids I had to create a list and store maps.
+
+            List<Map<String, String>> servantsMap = servantList.stream()
+                    .map(s -> {
+                        Map<String, String> mapServant = new HashMap<>();
+
+                        mapServant.put("nameServant", s.getNameServant());
+                        mapServant.put("noblePhantasm", s.getNoblePhantasm());
+                        mapServant.put("servantClass", s.getServantClass().getClassName());
+                        mapServant.put("letterType", s.getLettersTypes().getLetterType());
+
+                        return mapServant;
+                    })
+                    .toList();
+
+            return servantsMap;
+
+        } catch (ServantNotFound snf) {
+            throw new ServantNotFound("NO SERVANT WAS FOUND IN THE DATABASE");
+        }
     }
 
     @Override
@@ -34,10 +54,13 @@ public class ServantServiceImpl implements ServantService {
 
         String[] names = name.split("-");
 
-        String nameServant = Arrays.stream(names)
+        /*String nameServant = Arrays.stream(names)
                 .map(n -> n + " ")
-                .collect(Collectors.joining()).trim();
+                .collect(Collectors.joining()).trim();*/
 
+        String nameServant = String.join(" ", names);
+
+        System.out.println(nameServant);
         Optional<Servant> optionalServant = servantRepository.findByName(nameServant);
 
         return optionalServant.orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND :: " + nameServant));
