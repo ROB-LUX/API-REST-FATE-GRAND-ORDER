@@ -1,9 +1,9 @@
 Description - Descripcion:
 
-- The project was implemented with the Spring Boot and Hibernate framework.
+- The project was implemented with the Spring Boot, Spring Security and Hibernate framework.
 With a MySQL DBMS
 
-- El proyecto fue implementado con el marco de trabajo Spring Boot e Hibernate.
+- El proyecto fue implementado con el marco de trabajo Spring Boot, Spring Security e Hibernate.
 Con una SGBD MySQL
 
 
