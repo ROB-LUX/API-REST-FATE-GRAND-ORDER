@@ -24,16 +24,17 @@ public class ServantRestController {
     }
 
     @GetMapping("/servants")
-    public List<Map<String, String>> findAll() {
+    public List<Map<String, String>> findAllServants() {
 
-        return servantService.findAll();
+        return servantService.findAllServants();
     }
 
     @GetMapping("/servant/{name}")
-    public Map<String, String> findName(@PathVariable String name) {
+    public Map<String, String> findServantByName(@PathVariable String name) {
         return servantService.findByName(name);
     }
 
+    @GetMapping("/findAll")
     public List<List<Object>> findClassesLetters() {
 
         List<List<Object>> list = new ArrayList<>();
@@ -46,6 +47,5 @@ public class ServantRestController {
 
         return list;
     }
-
 
 }

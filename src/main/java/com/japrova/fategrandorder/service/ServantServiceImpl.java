@@ -23,7 +23,7 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    public List<Map<String, String>> findAll() {
+    public List<Map<String, String>> findAllServants() {
 
         try {
             List<Servant> servantList = servantDao.findAllServants();
@@ -58,7 +58,7 @@ public class ServantServiceImpl implements ServantService {
 
         String nameServant = String.join(" ", names);
 
-        Optional<Servant> optionalServant = servantRepository.findByName(nameServant);
+        Optional<Servant> optionalServant = servantRepository.findServantByName(nameServant);
 
         if (optionalServant.isPresent()) {
 
@@ -79,11 +79,17 @@ public class ServantServiceImpl implements ServantService {
 
     @Override
     public List<Classes> findAllClasses() {
-        return null;
+
+        List<Classes> classesList = servantDao.findAllClasses();
+
+        return classesList;
     }
 
     @Override
     public List<LettersTypes> findAllLetters() {
-        return null;
+
+        List<LettersTypes> lettersTypes = servantDao.findAllLetters();
+
+        return lettersTypes;
     }
 }

@@ -26,13 +26,12 @@ public class ServantRepository implements ServantDao {
 
         String sql = "FROM Servant";
 
-        TypedQuery<Servant> servantTypedQuery = entityManager
-                .createQuery(sql, Servant.class);
+        List<Servant> servantList = (List<Servant>) findRandomData(sql, entityManager, new Servant());
 
-        return servantTypedQuery.getResultList();
+        return servantList;
     }
 
-    public Optional<Servant> findByName(String name) {
+    public Optional<Servant> findServantByName(String name) {
 
         String sql = "FROM Servant WHERE nameServant = :nameParam";
 
@@ -55,11 +54,21 @@ public class ServantRepository implements ServantDao {
 
     @Override
     public List<Classes> findAllClasses() {
-        return null;
+
+        String sql = "FROM Classes";
+
+        List<Classes> classesList = (List<Classes>) findRandomData(sql, entityManager, new Classes());
+
+        return classesList;
     }
 
     @Override
     public List<LettersTypes> findAllLetters() {
-        return null;
+
+        String sql = "FROM LettersTypes";
+
+        List<LettersTypes> typesList = (List<LettersTypes>) findRandomData(sql, entityManager, new LettersTypes());
+
+        return typesList;
     }
 }
