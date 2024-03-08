@@ -1,5 +1,7 @@
 package com.japrova.fategrandorder.dao;
 
+import com.japrova.fategrandorder.entity.Classes;
+import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.EntityManager;
@@ -14,14 +16,13 @@ import java.util.Optional;
 public class ServantRepository implements ServantDao {
 
     private EntityManager entityManager;
-
     @Autowired
     public ServantRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
     @Override
-    public List<Servant> findAll() throws ServantNotFound {
+    public List<Servant> findAllServants() throws ServantNotFound {
 
         String sql = "FROM Servant";
 
@@ -50,5 +51,15 @@ public class ServantRepository implements ServantDao {
         }
 
         return Optional.ofNullable(undecidedServant);
+    }
+
+    @Override
+    public List<Classes> findAllClasses() {
+        return null;
+    }
+
+    @Override
+    public List<LettersTypes> findAllLetters() {
+        return null;
     }
 }

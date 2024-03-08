@@ -1,5 +1,7 @@
 package com.japrova.fategrandorder.service;
 
+import com.japrova.fategrandorder.entity.Classes;
+import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -10,6 +12,10 @@ public interface ServantService {
 
     List<Map<String, String>> findAll();
 
-    Servant findByName(String name);
+    Map<String, String> findByName(String name);
+
+    List<Classes> findAllClasses();
+
+    List<LettersTypes> findAllLetters();
 
 }

@@ -2,12 +2,13 @@ package com.japrova.fategrandorder.service;
 
 import com.japrova.fategrandorder.dao.ServantDao;
 import com.japrova.fategrandorder.dao.ServantRepository;
+import com.japrova.fategrandorder.entity.Classes;
+import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ServantServiceImpl implements ServantService {
@@ -25,11 +26,11 @@ public class ServantServiceImpl implements ServantService {
     public List<Map<String, String>> findAll() {
 
         try {
-            List<Servant> servantList = servantDao.findAll();
+            List<Servant> servantList = servantDao.findAllServants();
 
             // To avoid displaying sensitive data such as ids I had to create a list and store maps.
 
-            List<Map<String, String>> servantsMap = servantList.stream()
+            return servantList.stream()
                     .map(s -> {
                         Map<String, String> mapServant = new HashMap<>();
 
@@ -42,7 +43,6 @@ public class ServantServiceImpl implements ServantService {
                     })
                     .toList();
 
-            return servantsMap;
 
         } catch (ServantNotFound snf) {
             throw new ServantNotFound("NO SERVANT WAS FOUND IN THE DATABASE");
@@ -50,19 +50,40 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    public Servant findByName(String name) {
+    public Map<String, String> findByName(String name) {
+
+        // We remove the hyphens in the name
 
         String[] names = name.split("-");
 
-        /*String nameServant = Arrays.stream(names)
-                .map(n -> n + " ")
-                .collect(Collectors.joining()).trim();*/
-
         String nameServant = String.join(" ", names);
 
-        System.out.println(nameServant);
         Optional<Servant> optionalServant = servantRepository.findByName(nameServant);
 
-        return optionalServant.orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND :: " + nameServant));
+        if (optionalServant.isPresent()) {
+
+            Servant servant = optionalServant.get();
+
+            Map<String, String> servantMap = new HashMap<>();
+
+            servantMap.put("nameServant", servant.getNameServant());
+            servantMap.put("noblePhantasm", servant.getNoblePhantasm());
+            servantMap.put("servantClass", servant.getServantClass().getClassName());
+            servantMap.put("letterType", servant.getLettersTypes().getLetterType());
+
+            return servantMap;
+        }
+
+        throw new ServantNotFound("SERVANT NOT FOUND :: " + nameServant);
+    }
+
+    @Override
+    public List<Classes> findAllClasses() {
+        return null;
+    }
+
+    @Override
+    public List<LettersTypes> findAllLetters() {
+        return null;
     }
 }

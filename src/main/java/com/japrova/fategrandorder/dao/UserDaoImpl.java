@@ -3,7 +3,6 @@ package com.japrova.fategrandorder.dao;
 import com.japrova.fategrandorder.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
