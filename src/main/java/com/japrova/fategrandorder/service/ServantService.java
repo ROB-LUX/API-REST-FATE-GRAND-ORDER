@@ -2,6 +2,7 @@ package com.japrova.fategrandorder.service;
 
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
+import com.japrova.fategrandorder.entity.Servant;
 
 import java.util.List;
 import java.util.Map;
@@ -15,5 +16,9 @@ public interface ServantService {
     List<Classes> findAllClasses();
 
     List<LettersTypes> findAllLetters();
+
+    boolean persistServant(Servant servant);
+
+    boolean updateServant(Servant servant);
 
 }

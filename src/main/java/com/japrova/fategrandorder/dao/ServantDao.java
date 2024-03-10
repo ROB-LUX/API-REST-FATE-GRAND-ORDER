@@ -13,27 +13,15 @@ import java.util.Optional;
 public interface ServantDao {
 
     List<Servant> findAllServants() throws ServantNotFound;
+
     Optional<Servant> findServantByName(String nameServant);
 
     List<Classes> findAllClasses();
 
     List<LettersTypes> findAllLetters();
 
-    default List<?> findRandomData(String sql, EntityManager entityManager
-            , Object object) {
+    boolean saveServantClass(int idClass, int idServant);
 
-        TypedQuery<?> objectTypedQuery = null;
+    boolean saveServanTypes(int idLetter, int idServant);
 
-            if (object instanceof Servant) {
-
-                objectTypedQuery = entityManager.createQuery(sql, Servant.class);
-            } else if (object instanceof Classes) {
-
-                objectTypedQuery = entityManager.createQuery(sql, Classes.class);
-            } else {
-                objectTypedQuery = entityManager.createQuery(sql, LettersTypes.class);
-            }
-
-        return objectTypedQuery.getResultList();
-    }
 }

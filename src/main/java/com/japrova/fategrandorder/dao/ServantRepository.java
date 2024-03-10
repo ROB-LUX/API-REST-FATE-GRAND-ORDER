@@ -6,29 +6,33 @@ import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public class ServantRepository implements ServantDao {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
     @Autowired
     public ServantRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+
     @Override
     public List<Servant> findAllServants() throws ServantNotFound {
 
-        String sql = "FROM Servant";
+        Query queryNative = entityManager
+                .createNativeQuery("SELECT * FROM servants");
 
-        List<Servant> servantList = (List<Servant>) findRandomData(sql, entityManager, new Servant());
 
-        return servantList;
+        return (List<Servant>) queryNative.getResultList();
     }
 
     public Optional<Servant> findServantByName(String name) {
@@ -55,20 +59,46 @@ public class ServantRepository implements ServantDao {
     @Override
     public List<Classes> findAllClasses() {
 
-        String sql = "FROM Classes";
+        Query queryNative = entityManager
+                .createNativeQuery("SELECT * FROM classes");
 
-        List<Classes> classesList = (List<Classes>) findRandomData(sql, entityManager, new Classes());
 
-        return classesList;
+        return (List<Classes>) queryNative.getResultList();
     }
 
     @Override
     public List<LettersTypes> findAllLetters() {
 
-        String sql = "FROM LettersTypes";
+        Query queryNative = entityManager
+                .createNativeQuery("SELECT * FROM letters_types");
 
-        List<LettersTypes> typesList = (List<LettersTypes>) findRandomData(sql, entityManager, new LettersTypes());
 
-        return typesList;
+        return (List<LettersTypes>) queryNative.getResultList();
+    }
+
+    @Override
+    @Modifying
+    public boolean saveServantClass(int idClass, int idServant) {
+
+        Query queryNative = entityManager
+                .createNativeQuery("INSERT INTO classes_servants VALUES (:idClass, :idServant)");
+
+        queryNative.setParameter("idClass", idClass);
+        queryNative.setParameter("idServant", idServant);
+
+        return queryNative.executeUpdate() > 0;
+    }
+
+    @Override
+    @Modifying
+    public boolean saveServanTypes(int idLetter, int idServant) {
+
+        Query queryNative = entityManager
+                .createNativeQuery("INSERT INTO servants_types VALUES (:idLetter, :idServant)");
+
+        queryNative.setParameter("idLetter", idLetter);
+        queryNative.setParameter("idServant", idServant);
+
+        return queryNative.executeUpdate() > 0;
     }
 }

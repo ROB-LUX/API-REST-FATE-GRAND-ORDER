@@ -2,11 +2,14 @@ package com.japrova.fategrandorder.service;
 
 import com.japrova.fategrandorder.dao.ServantDao;
 import com.japrova.fategrandorder.dao.ServantRepository;
+import com.japrova.fategrandorder.dao.SpringDataDao;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -14,12 +17,11 @@ import java.util.*;
 public class ServantServiceImpl implements ServantService {
 
     private final ServantDao servantDao;
+    private final SpringDataDao springDataDao;
 
-    private final ServantRepository servantRepository;
-
-    public ServantServiceImpl(ServantDao servantDao, ServantRepository servantRepository) {
+    public ServantServiceImpl(ServantDao servantDao, SpringDataDao springDataDao) {
         this.servantDao = servantDao;
-        this.servantRepository = servantRepository;
+        this.springDataDao = springDataDao;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ServantServiceImpl implements ServantService {
 
         String nameServant = String.join(" ", names);
 
-        Optional<Servant> optionalServant = servantRepository.findServantByName(nameServant);
+        Optional<Servant> optionalServant = servantDao.findServantByName(nameServant);
 
         if (optionalServant.isPresent()) {
 
@@ -91,5 +93,35 @@ public class ServantServiceImpl implements ServantService {
         List<LettersTypes> lettersTypes = servantDao.findAllLetters();
 
         return lettersTypes;
+    }
+
+    @Override
+    @Transactional
+    public boolean persistServant(Servant s) {
+
+        s.setIdServant(0);
+
+        int idClass = s.getServantClass().getIdClass();
+        int idLetter = s.getLettersTypes().getIdLetter();
+
+        s.setServantClass(null);
+        s.setLettersTypes(null);
+
+        Servant servant = springDataDao.save(s);
+
+        boolean validationClass = servantDao
+                .saveServantClass(idClass, servant.getIdServant());
+
+        boolean validationLetter = servantDao
+                .saveServanTypes(idLetter, servant.getIdServant());
+
+        return validationClass && validationLetter;
+
+    }
+
+    @Override
+    @Transactional
+    public boolean updateServant(Servant servant) {
+        return false;
     }
 }

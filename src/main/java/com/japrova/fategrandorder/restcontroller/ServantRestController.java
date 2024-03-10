@@ -1,12 +1,8 @@
 package com.japrova.fategrandorder.restcontroller;
 
-import com.japrova.fategrandorder.entity.Classes;
-import com.japrova.fategrandorder.entity.LettersTypes;
+import com.japrova.fategrandorder.entity.*;
 import com.japrova.fategrandorder.service.ServantServiceImpl;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,9 +20,10 @@ public class ServantRestController {
     }
 
     @GetMapping("/servants")
-    public List<Map<String, String>> findAllServants() {
+    public /*List<Map<String, String>>*/ String findAllServants() {
 
-        return servantService.findAllServants();
+        /*return servantService.findAllServants();*/
+        return "Hola mundo";
     }
 
     @GetMapping("/servant/{name}")
@@ -48,4 +45,25 @@ public class ServantRestController {
         return list;
     }
 
+
+    @PostMapping("/persistServant")
+    public String persistServant(@RequestBody Servant servant) {
+
+        String message = "Message: ";
+
+        boolean validation = servantService.persistServant(servant);
+
+        if (validation) {
+            return message.concat("Servant Kept");
+        } else {
+            return message.concat("Unguarded Servant");
+        }
+    }
+
+    @GetMapping("/letters")
+    public List<LettersTypes> lettersTypes() {
+
+
+        return servantService.findAllLetters();
+    }
 }
