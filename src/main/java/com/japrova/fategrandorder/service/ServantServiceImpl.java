@@ -1,13 +1,11 @@
 package com.japrova.fategrandorder.service;
 
-import com.japrova.fategrandorder.dao.ServantDao;
-import com.japrova.fategrandorder.dao.ServantRepository;
+import com.japrova.fategrandorder.dao.FateGoDao;
 import com.japrova.fategrandorder.dao.SpringDataDao;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +14,10 @@ import java.util.*;
 @Service
 public class ServantServiceImpl implements ServantService {
 
-    private final ServantDao servantDao;
+    private final FateGoDao servantDao;
     private final SpringDataDao springDataDao;
 
-    public ServantServiceImpl(ServantDao servantDao, SpringDataDao springDataDao) {
+    public ServantServiceImpl(FateGoDao servantDao, SpringDataDao springDataDao) {
         this.servantDao = servantDao;
         this.springDataDao = springDataDao;
     }
@@ -28,7 +26,7 @@ public class ServantServiceImpl implements ServantService {
     public List<Map<String, String>> findAllServants() {
 
         try {
-            List<Servant> servantList = servantDao.findAllServants();
+            List<Servant> servantList = springDataDao.findAllServants();
 
             // To avoid displaying sensitive data such as ids I had to create a list and store maps.
 
@@ -47,7 +45,7 @@ public class ServantServiceImpl implements ServantService {
 
 
         } catch (ServantNotFound snf) {
-            throw new ServantNotFound("NO SERVANT WAS FOUND IN THE DATABASE");
+            throw new ServantNotFound("SERVANT NOT FOUND");
         }
     }
 
@@ -82,7 +80,7 @@ public class ServantServiceImpl implements ServantService {
     @Override
     public List<Classes> findAllClasses() {
 
-        List<Classes> classesList = servantDao.findAllClasses();
+        List<Classes> classesList = springDataDao.findAllClasses();
 
         return classesList;
     }
@@ -90,7 +88,7 @@ public class ServantServiceImpl implements ServantService {
     @Override
     public List<LettersTypes> findAllLetters() {
 
-        List<LettersTypes> lettersTypes = servantDao.findAllLetters();
+        List<LettersTypes> lettersTypes = springDataDao.findAllLetters();
 
         return lettersTypes;
     }
@@ -106,6 +104,10 @@ public class ServantServiceImpl implements ServantService {
 
         s.setServantClass(null);
         s.setLettersTypes(null);
+
+        if (idClass == 0 && idLetter == 0) {
+            throw new ServantNotFound("Error with ids");
+        }
 
         Servant servant = springDataDao.save(s);
 

@@ -20,10 +20,9 @@ public class ServantRestController {
     }
 
     @GetMapping("/servants")
-    public /*List<Map<String, String>>*/ String findAllServants() {
+    public List<Map<String, String>> findAllServants() {
 
-        /*return servantService.findAllServants();*/
-        return "Hola mundo";
+        return servantService.findAllServants();
     }
 
     @GetMapping("/servant/{name}")

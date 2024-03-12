@@ -1,6 +1,6 @@
 package com.japrova.fategrandorder.exceptions;
 
-public class ServantErrorResponse {
+public class FgoException {
 
     private int status;
 
@@ -8,7 +8,7 @@ public class ServantErrorResponse {
 
     private long timeStamp;
 
-    public ServantErrorResponse() {
+    public FgoException() {
     }
 
     public int getStatus() {
