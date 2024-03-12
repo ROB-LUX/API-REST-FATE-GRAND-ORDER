@@ -4,10 +4,7 @@ import com.japrova.fategrandorder.entity.*;
 import com.japrova.fategrandorder.service.ServantServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -44,7 +41,6 @@ public class ServantRestController {
         return list;
     }
 
-
     @PostMapping("/persistServant")
     public String persistServant(@RequestBody Servant servant) {
 
@@ -59,10 +55,11 @@ public class ServantRestController {
         }
     }
 
-    @GetMapping("/letters")
-    public List<LettersTypes> lettersTypes() {
+    @PutMapping("/servant-update")
+    public Servant updateServant(@RequestBody Servant servant) {
 
+        Servant updateServant = servantService.updateServant(servant);
 
-        return servantService.findAllLetters();
+        return updateServant;
     }
 }

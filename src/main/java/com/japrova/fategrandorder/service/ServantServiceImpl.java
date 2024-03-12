@@ -5,6 +5,7 @@ import com.japrova.fategrandorder.dao.SpringDataDao;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
+import com.japrova.fategrandorder.exceptions.DataNotFound;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +45,8 @@ public class ServantServiceImpl implements ServantService {
                     .toList();
 
 
-        } catch (ServantNotFound snf) {
-            throw new ServantNotFound("SERVANT NOT FOUND");
+        } catch (DataNotFound dnf) {
+            throw new DataNotFound("SERVER ERROR");
         }
     }
 
@@ -80,17 +81,28 @@ public class ServantServiceImpl implements ServantService {
     @Override
     public List<Classes> findAllClasses() {
 
-        List<Classes> classesList = springDataDao.findAllClasses();
 
-        return classesList;
+        try {
+            List<Classes> classesList = springDataDao.findAllClasses();
+
+            return classesList;
+
+        } catch (DataNotFound dnf) {
+            throw new DataNotFound("SERVER ERROR");
+        }
     }
 
     @Override
     public List<LettersTypes> findAllLetters() {
 
-        List<LettersTypes> lettersTypes = springDataDao.findAllLetters();
+        try {
+            List<LettersTypes> lettersTypes = springDataDao.findAllLetters();
 
-        return lettersTypes;
+            return lettersTypes;
+
+        } catch (DataNotFound dnf) {
+            throw new DataNotFound("SERVER ERROR");
+        }
     }
 
     @Override
@@ -123,7 +135,19 @@ public class ServantServiceImpl implements ServantService {
 
     @Override
     @Transactional
-    public boolean updateServant(Servant servant) {
-        return false;
+    public Servant updateServant(Servant servant) {
+
+        if (servant != null && servant.getIdServant() == 0) {
+
+            throw new ServantNotFound("Error with the id");
+        }
+
+        try {
+            Servant servantUpdate = springDataDao.save(servant);
+
+            return servantUpdate;
+        } catch (DataNotFound dnf) {
+            throw new DataNotFound("ERROR SERVER");
+        }
     }
 }

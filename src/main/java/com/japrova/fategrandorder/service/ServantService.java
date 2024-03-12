@@ -19,6 +19,6 @@ public interface ServantService {
 
     boolean persistServant(Servant servant);
 
-    boolean updateServant(Servant servant);
+    Servant updateServant(Servant servant);
 
 }
