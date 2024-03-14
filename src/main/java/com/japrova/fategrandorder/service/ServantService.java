@@ -1,17 +1,17 @@
 package com.japrova.fategrandorder.service;
 
+import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ServantService {
 
-    List<Map<String, String>> findAllServants();
+    List<ServantDto> findAllServants();
 
-    Map<String, String> findByName(String name);
+    ServantDto findByName(String name);
 
     List<Classes> findAllClasses();
 

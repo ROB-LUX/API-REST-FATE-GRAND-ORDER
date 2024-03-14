@@ -1,5 +1,6 @@
 package com.japrova.fategrandorder.restcontroller;
 
+import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.*;
 import com.japrova.fategrandorder.service.ServantServiceImpl;
 import org.springframework.web.bind.annotation.*;
@@ -17,28 +18,22 @@ public class ServantRestController {
     }
 
     @GetMapping("/servants")
-    public List<Map<String, String>> findAllServants() {
+    public List<ServantDto> findAllServants() {
 
         return servantService.findAllServants();
     }
 
     @GetMapping("/servant/{name}")
-    public Map<String, String> findServantByName(@PathVariable String name) {
+    public ServantDto findServantByName(@PathVariable String name) {
         return servantService.findByName(name);
     }
 
     @GetMapping("/findAll")
-    public List<List<Object>> findClassesLetters() {
+    public List<Object> findClassesLetters() {
 
-        List<List<Object>> list = new ArrayList<>();
+        return Arrays.asList(servantService.findAllClasses(),
+                servantService.findAllLetters());
 
-        List<LettersTypes> lettersList = servantService.findAllLetters();
-        List<Classes> classesList = servantService.findAllClasses();
-
-        list.add(Collections.singletonList(lettersList));
-        list.add(Collections.singletonList(classesList));
-
-        return list;
     }
 
     @PostMapping("/persistServant")

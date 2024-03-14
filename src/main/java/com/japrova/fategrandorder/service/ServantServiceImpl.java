@@ -2,6 +2,7 @@ package com.japrova.fategrandorder.service;
 
 import com.japrova.fategrandorder.dao.FateGoDao;
 import com.japrova.fategrandorder.dao.SpringDataDao;
+import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
@@ -24,7 +25,7 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    public List<Map<String, String>> findAllServants() {
+    public List<ServantDto> findAllServants() {
 
         try {
             List<Servant> servantList = springDataDao.findAllServants();
@@ -32,15 +33,13 @@ public class ServantServiceImpl implements ServantService {
             // To avoid displaying sensitive data such as ids I had to create a list and store maps.
 
             return servantList.stream()
-                    .map(s -> {
-                        Map<String, String> mapServant = new HashMap<>();
+                    .map(servant -> {
 
-                        mapServant.put("nameServant", s.getNameServant());
-                        mapServant.put("noblePhantasm", s.getNoblePhantasm());
-                        mapServant.put("servantClass", s.getServantClass().getClassName());
-                        mapServant.put("letterType", s.getLettersTypes().getLetterType());
+                        ServantDto servantDto = new ServantDto(servant.getNameServant(),
+                                servant.getNoblePhantasm(), servant.getServantClass().getClassName()
+                                , servant.getLettersTypes().getLetterType());
 
-                        return mapServant;
+                        return servantDto;
                     })
                     .toList();
 
@@ -51,7 +50,7 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    public Map<String, String> findByName(String name) {
+    public ServantDto findByName(String name) {
 
         // We remove the hyphens in the name
 
@@ -65,14 +64,13 @@ public class ServantServiceImpl implements ServantService {
 
             Servant servant = optionalServant.get();
 
-            Map<String, String> servantMap = new HashMap<>();
+            ServantDto servantDto = new ServantDto();
+            servantDto.setNameServant(servant.getNameServant());
+            servantDto.setNoblePhantasm(servant.getNoblePhantasm());
+            servantDto.setServantClass(servant.getServantClass().getClassName());
+            servantDto.setLetterType(servant.getLettersTypes().getLetterType());
 
-            servantMap.put("nameServant", servant.getNameServant());
-            servantMap.put("noblePhantasm", servant.getNoblePhantasm());
-            servantMap.put("servantClass", servant.getServantClass().getClassName());
-            servantMap.put("letterType", servant.getLettersTypes().getLetterType());
-
-            return servantMap;
+            return servantDto;
         }
 
         throw new ServantNotFound("SERVANT NOT FOUND :: " + nameServant);
