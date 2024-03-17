@@ -1,6 +1,5 @@
 package com.japrova.fategrandorder.exceptions;
 
-import com.japrova.fategrandorder.entity.Classes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,7 +21,7 @@ public class FateGoExceptionsHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<DataException> handleExceptionClasses(DataNotFound de) {
+    public ResponseEntity<DataException> handleExceptionClasses(ErrorPersistence de) {
 
         DataException dataException = new DataException();
 

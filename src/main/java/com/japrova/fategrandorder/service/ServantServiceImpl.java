@@ -6,9 +6,10 @@ import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
 import com.japrova.fategrandorder.entity.Servant;
-import com.japrova.fategrandorder.exceptions.DataNotFound;
+import com.japrova.fategrandorder.exceptions.ErrorPersistence;
 import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -33,19 +34,14 @@ public class ServantServiceImpl implements ServantService {
             // To avoid displaying sensitive data such as ids I had to create a list and store maps.
 
             return servantList.stream()
-                    .map(servant -> {
-
-                        ServantDto servantDto = new ServantDto(servant.getNameServant(),
-                                servant.getNoblePhantasm(), servant.getServantClass().getClassName()
-                                , servant.getLettersTypes().getLetterType());
-
-                        return servantDto;
-                    })
+                    .map(servant -> new ServantDto(servant.getIdServant(), servant.getNameServant(),
+                            servant.getNoblePhantasm(), servant.getServantClass().getClassName()
+                            , servant.getLettersTypes().getLetterType()))
                     .toList();
 
 
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("SERVER ERROR");
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("SERVER ERROR");
         }
     }
 
@@ -65,6 +61,7 @@ public class ServantServiceImpl implements ServantService {
             Servant servant = optionalServant.get();
 
             ServantDto servantDto = new ServantDto();
+            servantDto.setIdServant(servant.getIdServant());
             servantDto.setNameServant(servant.getNameServant());
             servantDto.setNoblePhantasm(servant.getNoblePhantasm());
             servantDto.setServantClass(servant.getServantClass().getClassName());
@@ -85,8 +82,8 @@ public class ServantServiceImpl implements ServantService {
 
             return classesList;
 
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("SERVER ERROR");
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("SERVER ERROR");
         }
     }
 
@@ -98,54 +95,62 @@ public class ServantServiceImpl implements ServantService {
 
             return lettersTypes;
 
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("SERVER ERROR");
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("SERVER ERROR");
         }
     }
 
     @Override
-    @Transactional
-    public boolean persistServant(Servant s) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ServantDto saveServant(final ServantDto servantDto) {
 
-        s.setIdServant(0);
+        servantDto.setIdServant(0);
 
-        int idClass = s.getServantClass().getIdClass();
-        int idLetter = s.getLettersTypes().getIdLetter();
-
-        s.setServantClass(null);
-        s.setLettersTypes(null);
+        int idClass = Integer.parseInt(servantDto.getServantClass());
+        int idLetter = Integer.parseInt(servantDto.getLetterType());
 
         if (idClass == 0 && idLetter == 0) {
             throw new ServantNotFound("Error with ids");
         }
 
-        Servant servant = springDataDao.save(s);
+        Servant servant = new Servant(servantDto.getIdServant(), servantDto.getNameServant(), servantDto.getNoblePhantasm());
 
-        boolean validationClass = servantDao
-                .saveServantClass(idClass, servant.getIdServant());
+        try {
+            Servant saveServant = springDataDao.save(servant);
 
-        boolean validationLetter = servantDao
-                .saveServanTypes(idLetter, servant.getIdServant());
+            int idServant = saveServant.getIdServant();
 
-        return validationClass && validationLetter;
+            servantDao.saveServantClass(idClass, idServant);
 
+            servantDao.saveServanTypes(idLetter, idServant);
+
+            servantDto.setIdServant(idServant);
+
+            return servantDto;
+
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("ROLLBACK ACTIVATE");
+        }
     }
 
     @Override
     @Transactional
-    public Servant updateServant(Servant servant) {
+    public Servant updateServant(final ServantDto servantDto) {
 
-        if (servant != null && servant.getIdServant() == 0) {
+        if (servantDto != null && servantDto.getIdServant() == 0) {
 
             throw new ServantNotFound("Error with the id");
         }
 
         try {
-            Servant servantUpdate = springDataDao.save(servant);
 
-            return servantUpdate;
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("ERROR SERVER");
+            Servant servant = new Servant(servantDto.getIdServant(),
+                    servantDto.getNameServant(), servantDto.getNoblePhantasm());
+
+            return springDataDao.save(servant);
+
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("ERROR SERVER");
         }
     }
 }

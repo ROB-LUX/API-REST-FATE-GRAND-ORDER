@@ -31,30 +31,18 @@ public class ServantRestController {
     @GetMapping("/findAll")
     public List<Object> findClassesLetters() {
 
-        return Arrays.asList(servantService.findAllClasses(),
-                servantService.findAllLetters());
-
+        return Arrays.asList(servantService.findAllLetters(), servantService.findAllClasses());
     }
 
-    @PostMapping("/persistServant")
-    public String persistServant(@RequestBody Servant servant) {
+    @PostMapping("/saveServant")
+    public ServantDto saveServant(@RequestBody ServantDto servant) {
 
-        String message = "Message: ";
-
-        boolean validation = servantService.persistServant(servant);
-
-        if (validation) {
-            return message.concat("Servant Kept");
-        } else {
-            return message.concat("Unguarded Servant");
-        }
+        return servantService.saveServant(servant);
     }
 
-    @PutMapping("/servant-update")
-    public Servant updateServant(@RequestBody Servant servant) {
+    @PutMapping("/updateServant")
+    public Servant updateServant(@RequestBody ServantDto servant) {
 
-        Servant updateServant = servantService.updateServant(servant);
-
-        return updateServant;
+        return servantService.updateServant(servant);
     }
 }

@@ -35,6 +35,12 @@ public class Servant {
     public Servant() {
     }
 
+    public Servant(int idServant, String nameServant, String noblePhantasm) {
+        this.idServant = idServant;
+        this.nameServant = nameServant;
+        this.noblePhantasm = noblePhantasm;
+    }
+
     public int getIdServant() {
         return idServant;
     }

@@ -17,8 +17,8 @@ public interface ServantService {
 
     List<LettersTypes> findAllLetters();
 
-    boolean persistServant(Servant servant);
+    ServantDto saveServant(ServantDto servant);
 
-    Servant updateServant(Servant servant);
+    Servant updateServant(ServantDto servant);
 
 }

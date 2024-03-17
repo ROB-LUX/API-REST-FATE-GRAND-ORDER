@@ -1,8 +1,9 @@
 package com.japrova.fategrandorder.dao;
 
+import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.*;
 import com.japrova.fategrandorder.entity.Servant;
-import com.japrova.fategrandorder.exceptions.DataNotFound;
+import com.japrova.fategrandorder.exceptions.ErrorPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
@@ -20,22 +21,20 @@ public class FateGoRepository implements FateGoDao {
 
     public Optional<Servant> findServantByName(String name) {
 
-        String sql = "FROM Servant WHERE nameServant = :nameParam";
+        String hql = "FROM Servant WHERE nameServant = :nameParam";
 
         TypedQuery<Servant> servantTypedQuery = entityManager
-                .createQuery(sql, Servant.class);
+                .createQuery(hql, Servant.class);
 
         servantTypedQuery.setParameter("nameParam", name);
 
-        Servant undecidedServant = null;
-
+        Servant servant = null;
         try {
-            undecidedServant = servantTypedQuery.getSingleResult();
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("SERVER ERROR");
-        }
+            servant = servantTypedQuery.getSingleResult();
 
-        return Optional.ofNullable(undecidedServant);
+        } catch (NoResultException nr) {
+        }
+        return Optional.ofNullable(servant);
     }
 
     @Override
@@ -49,12 +48,11 @@ public class FateGoRepository implements FateGoDao {
         queryNative.setParameter("idServant", idServant);
 
         try {
-            return queryNative.executeUpdate() > 0;
+            return queryNative.executeUpdate() > 1;
 
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("SERVER ERROR");
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("SERVER ERROR");
         }
-
     }
 
     @Override
@@ -69,10 +67,10 @@ public class FateGoRepository implements FateGoDao {
 
         try {
 
-            return queryNative.executeUpdate() > 0;
+            return queryNative.executeUpdate() > 1;
 
-        } catch (DataNotFound dnf) {
-            throw new DataNotFound("SERVER ERROR");
+        } catch (ErrorPersistence dnf) {
+            throw new ErrorPersistence("SERVER ERROR");
         }
 
     }

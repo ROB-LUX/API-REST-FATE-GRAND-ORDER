@@ -2,6 +2,8 @@ package com.japrova.fategrandorder.dto;
 
 public class ServantDto {
 
+    private int idServant;
+
     private String nameServant;
 
     private String noblePhantasm;
@@ -13,7 +15,8 @@ public class ServantDto {
     public ServantDto() {
     }
 
-    public ServantDto(String nameServant, String noblePhantasm, String servantClass, String letterType) {
+    public ServantDto(int idServant, String nameServant, String noblePhantasm, String servantClass, String letterType) {
+        this.idServant = idServant;
         this.nameServant = nameServant;
         this.noblePhantasm = noblePhantasm;
         this.servantClass = servantClass;
@@ -50,5 +53,13 @@ public class ServantDto {
 
     public void setLetterType(String letterType) {
         this.letterType = letterType;
+    }
+
+    public int getIdServant() {
+        return idServant;
+    }
+
+    public void setIdServant(int idServant) {
+        this.idServant = idServant;
     }
 }
