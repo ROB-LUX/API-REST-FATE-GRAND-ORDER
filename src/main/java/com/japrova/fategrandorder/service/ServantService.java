@@ -3,7 +3,6 @@ package com.japrova.fategrandorder.service;
 import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.Classes;
 import com.japrova.fategrandorder.entity.LettersTypes;
-import com.japrova.fategrandorder.entity.Servant;
 
 import java.util.List;
 
@@ -19,6 +18,8 @@ public interface ServantService {
 
     ServantDto saveServant(ServantDto servant);
 
-    Servant updateServant(ServantDto servant);
+    ServantDto updateServant(ServantDto servant);
+
+    void deleteServant(int idServant);
 
 }

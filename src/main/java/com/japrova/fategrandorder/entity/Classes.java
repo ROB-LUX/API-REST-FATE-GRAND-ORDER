@@ -1,9 +1,13 @@
 package com.japrova.fategrandorder.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "classes")
+@Getter @Setter @NoArgsConstructor
 public class Classes {
 
     @Id
@@ -14,22 +18,4 @@ public class Classes {
     @Column(name = "class")
     private String className;
 
-    public Classes() {
-    }
-
-    public int getIdClass() {
-        return idClass;
-    }
-
-    public void setIdClass(int idClass) {
-        this.idClass = idClass;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
 }

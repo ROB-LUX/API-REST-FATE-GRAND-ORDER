@@ -41,8 +41,14 @@ public class ServantRestController {
     }
 
     @PutMapping("/updateServant")
-    public Servant updateServant(@RequestBody ServantDto servant) {
+    public ServantDto updateServant(@RequestBody ServantDto servant) {
 
         return servantService.updateServant(servant);
+    }
+
+    @DeleteMapping("/deleteServant/{idServant}")
+    public void deleteServant(@PathVariable int idServant) {
+
+        servantService.deleteServant(idServant);
     }
 }

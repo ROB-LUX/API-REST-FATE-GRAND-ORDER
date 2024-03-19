@@ -1,9 +1,13 @@
 package com.japrova.fategrandorder.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "servants")
+@Getter @Setter @NoArgsConstructor
 public class Servant {
 
     @Id
@@ -30,54 +34,10 @@ public class Servant {
             inverseJoinColumns = @JoinColumn(name = "letter_type"))
     private LettersTypes lettersTypes;
 
-
-
-    public Servant() {
-    }
-
     public Servant(int idServant, String nameServant, String noblePhantasm) {
         this.idServant = idServant;
         this.nameServant = nameServant;
         this.noblePhantasm = noblePhantasm;
     }
 
-    public int getIdServant() {
-        return idServant;
-    }
-
-    public void setIdServant(int idServant) {
-        this.idServant = idServant;
-    }
-
-    public String getNameServant() {
-        return nameServant;
-    }
-
-    public void setNameServant(String nameServant) {
-        this.nameServant = nameServant;
-    }
-
-    public String getNoblePhantasm() {
-        return noblePhantasm;
-    }
-
-    public void setNoblePhantasm(String noblePhantasm) {
-        this.noblePhantasm = noblePhantasm;
-    }
-
-    public Classes getServantClass() {
-        return servantClass;
-    }
-
-    public void setServantClass(Classes servantClass) {
-        this.servantClass = servantClass;
-    }
-
-    public LettersTypes getLettersTypes() {
-        return lettersTypes;
-    }
-
-    public void setLettersTypes(LettersTypes lettersTypes) {
-        this.lettersTypes = lettersTypes;
-    }
 }

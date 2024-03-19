@@ -8,8 +8,11 @@ public interface FateGoDao {
 
     Optional<Servant> findServantByName(String nameServant);
 
-    boolean saveServantClass(int idClass, int idServant);
+    void saveServantClass(int idClass, int idServant);
 
-    boolean saveServanTypes(int idLetter, int idServant);
+    void saveServanTypes(int idLetter, int idServant);
+
+    int findServantType(int id);
+    int findServantClass(int idServant);
 
 }

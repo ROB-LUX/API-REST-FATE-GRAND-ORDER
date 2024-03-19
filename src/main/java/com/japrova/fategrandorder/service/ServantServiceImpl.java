@@ -60,14 +60,10 @@ public class ServantServiceImpl implements ServantService {
 
             Servant servant = optionalServant.get();
 
-            ServantDto servantDto = new ServantDto();
-            servantDto.setIdServant(servant.getIdServant());
-            servantDto.setNameServant(servant.getNameServant());
-            servantDto.setNoblePhantasm(servant.getNoblePhantasm());
-            servantDto.setServantClass(servant.getServantClass().getClassName());
-            servantDto.setLetterType(servant.getLettersTypes().getLetterType());
+            return new ServantDto(servant.getIdServant(),
+                    servant.getNameServant(), servant.getNoblePhantasm(), servant.getServantClass().getClassName(),
+                    servant.getLettersTypes().getLetterType());
 
-            return servantDto;
         }
 
         throw new ServantNotFound("SERVANT NOT FOUND :: " + nameServant);
@@ -101,32 +97,32 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ServantDto saveServant(final ServantDto servantDto) {
 
-        servantDto.setIdServant(0);
-
-        int idClass = Integer.parseInt(servantDto.getServantClass());
-        int idLetter = Integer.parseInt(servantDto.getLetterType());
+        int idClass = Integer.parseInt(servantDto.servantClass());
+        int idLetter = Integer.parseInt(servantDto.letterType());
 
         if (idClass == 0 && idLetter == 0) {
             throw new ServantNotFound("Error with ids");
         }
 
-        Servant servant = new Servant(servantDto.getIdServant(), servantDto.getNameServant(), servantDto.getNoblePhantasm());
+        Servant servant = new Servant(servantDto.idServant(), servantDto.nameServant(), servantDto.noblePhantasm());
 
         try {
-            Servant saveServant = springDataDao.save(servant);
+            Servant SavSer = springDataDao.save(servant); // SavSer = save Servant
 
-            int idServant = saveServant.getIdServant();
+            int idServant = SavSer.getIdServant();
 
             servantDao.saveServantClass(idClass, idServant);
-
             servantDao.saveServanTypes(idLetter, idServant);
 
-            servantDto.setIdServant(idServant);
+            int idClasses = servantDao.findServantClass(idServant);
+            int idLetters = servantDao.findServantType(idServant);
 
-            return servantDto;
+
+            return new ServantDto(idServant, SavSer.getNameServant(), SavSer.getNoblePhantasm(),
+                    String.valueOf(idClasses), String.valueOf(idLetters));
 
         } catch (ErrorPersistence dnf) {
             throw new ErrorPersistence("ROLLBACK ACTIVATE");
@@ -134,23 +130,50 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    @Transactional
-    public Servant updateServant(final ServantDto servantDto) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public ServantDto updateServant(ServantDto servantDto) {
 
-        if (servantDto != null && servantDto.getIdServant() == 0) {
+        if (servantDto != null && servantDto.idServant() == 0) {
 
             throw new ServantNotFound("Error with the id");
         }
 
         try {
 
-            Servant servant = new Servant(servantDto.getIdServant(),
-                    servantDto.getNameServant(), servantDto.getNoblePhantasm());
+            Servant servant = new Servant(servantDto.idServant(),
+                    servantDto.nameServant(), servantDto.noblePhantasm());
 
-            return springDataDao.save(servant);
+            servant = springDataDao.save(servant);
+
+            int servantId = servant.getIdServant();
+
+            servantDao.saveServantClass(Integer.parseInt(servantDto.servantClass()), servantId);
+            servantDao.saveServanTypes(Integer.parseInt(servantDto.letterType()), servantId);
+
+            int idClasses = servantDao.findServantClass(servantId);
+
+            int idLetters = servantDao.findServantType(servantId);
+
+            return new ServantDto(servantId, servant.getNameServant(), servant.getNoblePhantasm(), String.valueOf(idClasses),
+                    String.valueOf(idLetters));
 
         } catch (ErrorPersistence dnf) {
             throw new ErrorPersistence("ERROR SERVER");
         }
+    }
+
+    @Override
+    public void deleteServant(int idServant) {
+
+        if (idServant == 0) {
+            throw new ServantNotFound("Error with ids");
+        }
+
+        Optional<Servant> optionalServant = springDataDao.findById(idServant);
+
+        Servant servant = optionalServant.
+                orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND WITH ID " + idServant));
+
+        springDataDao.delete(servant);
     }
 }

@@ -1,6 +1,5 @@
 package com.japrova.fategrandorder.dao;
 
-import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.*;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ErrorPersistence;
@@ -14,6 +13,7 @@ import java.util.Optional;
 public class FateGoRepository implements FateGoDao {
 
     private final EntityManager entityManager;
+
     @Autowired
     public FateGoRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -32,46 +32,66 @@ public class FateGoRepository implements FateGoDao {
         try {
             servant = servantTypedQuery.getSingleResult();
 
-        } catch (NoResultException nr) {
+        } catch (NoResultException ignored) {
         }
         return Optional.ofNullable(servant);
     }
 
     @Override
     @Modifying
-    public boolean saveServantClass(int idClass, int idServant) {
+    public void saveServantClass(int idClass, int idServant) {
 
-        Query queryNative = entityManager
-                .createNativeQuery("INSERT INTO classes_servants VALUES (:idClass, :idServant)");
+        final String queryNative = "INSERT INTO classes_servants VALUES (?, ?)";
 
-        queryNative.setParameter("idClass", idClass);
-        queryNative.setParameter("idServant", idServant);
-
-        try {
-            return queryNative.executeUpdate() > 1;
-
-        } catch (ErrorPersistence dnf) {
-            throw new ErrorPersistence("SERVER ERROR");
-        }
+        queryNative(queryNative, idClass, idServant);
     }
 
     @Override
     @Modifying
-    public boolean saveServanTypes(int idLetter, int idServant) {
+    public void saveServanTypes(int idLetter, int idServant) {
+
+        final String queryNative = "INSERT INTO servants_types VALUES (?, ?)";
+
+        queryNative(queryNative, idLetter, idServant);
+    }
+
+    @Override
+    public int findServantType(int idServant) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM servants_types WHERE id_servant = ?");
+        query.setParameter(1, idServant);
+
+        Object[] result = (Object[]) query.getSingleResult();
+
+        return (int) result[0];
+
+    }
+
+    @Override
+    public int findServantClass(int idServant) {
+
+        Query query = entityManager.createNativeQuery("SELECT * FROM classes_servants WHERE id_servant = ?");
+        query.setParameter(1, idServant);
+
+
+        Object[] result = (Object[]) query.getSingleResult();
+
+        return (int) result[0];
+    }
+
+    private void queryNative(String sql, int idLetterOrClass, int idServant) {
 
         Query queryNative = entityManager
-                .createNativeQuery("INSERT INTO servants_types VALUES (:idLetter, :idServant)");
+                .createNativeQuery(sql);
 
-        queryNative.setParameter("idLetter", idLetter);
-        queryNative.setParameter("idServant", idServant);
+        queryNative.setParameter(1, idLetterOrClass);
+        queryNative.setParameter(2, idServant);
 
         try {
 
-            return queryNative.executeUpdate() > 1;
+            queryNative.executeUpdate();
 
-        } catch (ErrorPersistence dnf) {
+        } catch (PersistenceException dnf) {
             throw new ErrorPersistence("SERVER ERROR");
         }
-
     }
 }
