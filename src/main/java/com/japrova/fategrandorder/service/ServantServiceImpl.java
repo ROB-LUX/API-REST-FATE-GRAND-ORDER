@@ -1,13 +1,9 @@
 package com.japrova.fategrandorder.service;
 
-import com.japrova.fategrandorder.dao.FateGoDao;
-import com.japrova.fategrandorder.dao.SpringDataDao;
+import com.japrova.fategrandorder.dao.*;
 import com.japrova.fategrandorder.dto.ServantDto;
-import com.japrova.fategrandorder.entity.Classes;
-import com.japrova.fategrandorder.entity.LettersTypes;
-import com.japrova.fategrandorder.entity.Servant;
-import com.japrova.fategrandorder.exceptions.ErrorPersistence;
-import com.japrova.fategrandorder.exceptions.ServantNotFound;
+import com.japrova.fategrandorder.entity.*;
+import com.japrova.fategrandorder.exceptions.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,26 +103,7 @@ public class ServantServiceImpl implements ServantService {
             throw new ServantNotFound("Error with ids");
         }
 
-        Servant servant = new Servant(servantDto.idServant(), servantDto.nameServant(), servantDto.noblePhantasm());
-
-        try {
-            Servant SavSer = springDataDao.save(servant); // SavSer = save Servant
-
-            int idServant = SavSer.getIdServant();
-
-            servantDao.saveServantClass(idClass, idServant);
-            servantDao.saveServanTypes(idLetter, idServant);
-
-            int idClasses = servantDao.findServantClass(idServant);
-            int idLetters = servantDao.findServantType(idServant);
-
-
-            return new ServantDto(idServant, SavSer.getNameServant(), SavSer.getNoblePhantasm(),
-                    String.valueOf(idClasses), String.valueOf(idLetters));
-
-        } catch (ErrorPersistence dnf) {
-            throw new ErrorPersistence("ROLLBACK ACTIVATE");
-        }
+        return findServantDto(servantDto);
     }
 
     @Override
@@ -137,6 +114,26 @@ public class ServantServiceImpl implements ServantService {
 
             throw new ServantNotFound("Error with the id");
         }
+
+        return findServantDto(servantDto);
+    }
+
+    @Override
+    public void deleteServant(int idServant) {
+
+        if (idServant == 0) {
+            throw new ServantNotFound("Error with ids");
+        }
+
+        Optional<Servant> optionalServant = springDataDao.findById(idServant);
+
+        Servant servant = optionalServant.
+                orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND WITH ID " + idServant));
+
+        springDataDao.delete(servant);
+    }
+
+    private ServantDto findServantDto(ServantDto servantDto) {
 
         try {
 
@@ -160,20 +157,5 @@ public class ServantServiceImpl implements ServantService {
         } catch (ErrorPersistence dnf) {
             throw new ErrorPersistence("ERROR SERVER");
         }
-    }
-
-    @Override
-    public void deleteServant(int idServant) {
-
-        if (idServant == 0) {
-            throw new ServantNotFound("Error with ids");
-        }
-
-        Optional<Servant> optionalServant = springDataDao.findById(idServant);
-
-        Servant servant = optionalServant.
-                orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND WITH ID " + idServant));
-
-        springDataDao.delete(servant);
     }
 }
