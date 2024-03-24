@@ -38,24 +38,6 @@ public class FateGoRepository implements FateGoDao {
     }
 
     @Override
-    @Modifying
-    public void saveServantClass(int idClass, int idServant) {
-
-        final String queryNative = "INSERT INTO classes_servants VALUES (?, ?)";
-
-        queryNative(queryNative, idClass, idServant);
-    }
-
-    @Override
-    @Modifying
-    public void saveServanTypes(int idLetter, int idServant) {
-
-        final String queryNative = "INSERT INTO servants_types VALUES (?, ?)";
-
-        queryNative(queryNative, idLetter, idServant);
-    }
-
-    @Override
     public int findServantType(int idServant) {
         Query query = entityManager.createNativeQuery("SELECT * FROM servants_types WHERE id_servant = ?");
         query.setParameter(1, idServant);

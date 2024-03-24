@@ -1,6 +1,7 @@
 package com.japrova.fategrandorder.service;
 
 import com.japrova.fategrandorder.dao.*;
+import com.japrova.fategrandorder.dto.CardTypeDto;
 import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.*;
 import com.japrova.fategrandorder.exceptions.*;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ServantServiceImpl implements ServantService {
@@ -30,11 +32,14 @@ public class ServantServiceImpl implements ServantService {
             // To avoid displaying sensitive data such as ids I had to create a list and store maps.
 
             return servantList.stream()
-                    .map(servant -> new ServantDto(servant.getIdServant(), servant.getNameServant(),
-                            servant.getNoblePhantasm(), servant.getServantClass().getClassName()
-                            , servant.getLettersTypes().getLetterType()))
-                    .toList();
+                    .map(s ->
+                         new ServantDto(s.getIdServant(), s.getNameServant(),
+                                s.getNoblePhantasm(), s.getServantClass().getClassName(), s.getCardTypes().stream()
+                                 .map(cardTypes -> new CardTypeDto(cardTypes.getCardName()))
+                                 .collect(Collectors.toSet()))
 
+                    )
+                    .toList();
 
         } catch (ErrorPersistence dnf) {
             throw new ErrorPersistence("SERVER ERROR");
@@ -44,7 +49,7 @@ public class ServantServiceImpl implements ServantService {
     @Override
     public ServantDto findByName(String name) {
 
-        // We remove the hyphens in the name
+        // We remove the hyphens in the card
 
         String[] names = name.split("-");
 
@@ -56,10 +61,11 @@ public class ServantServiceImpl implements ServantService {
 
             Servant servant = optionalServant.get();
 
-            return new ServantDto(servant.getIdServant(),
+            /*return new ServantDto(servant.getIdServant(),
                     servant.getNameServant(), servant.getNoblePhantasm(), servant.getServantClass().getClassName(),
-                    servant.getLettersTypes().getLetterType());
+                    servant.getLettersTypes().getLetterType());*/
 
+            return null;
         }
 
         throw new ServantNotFound("SERVANT NOT FOUND :: " + nameServant);
@@ -80,10 +86,10 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    public List<LettersTypes> findAllLetters() {
+    public List<CardTypes> findAllLetters() {
 
         try {
-            List<LettersTypes> lettersTypes = springDataDao.findAllLetters();
+            List<CardTypes> lettersTypes = springDataDao.findAllLetters();
 
             return lettersTypes;
 
@@ -93,17 +99,24 @@ public class ServantServiceImpl implements ServantService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ServantDto saveServant(final ServantDto servantDto) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ServantDto saveServant(final ServantDto servant) {
 
-        int idClass = Integer.parseInt(servantDto.servantClass());
-        int idLetter = Integer.parseInt(servantDto.letterType());
+        /*int idLetter = servant.getLettersTypes().getIdLetter();*/
 
-        if (idClass == 0 && idLetter == 0) {
-            throw new ServantNotFound("Error with ids");
-        }
+        Set<CardTypes> cardTypes = springDataDao.findAllCardTypes();
 
-        return findServantDto(servantDto);
+        Servant servant1 = Servant.builder()
+                .idServant(0)
+                .nameServant(servant.nameServant())
+                .noblePhantasm(servant.noblePhantasm())
+                .servantClass(new Classes(3, "Nueva clase"))
+                .cardTypes(cardTypes)
+                .build();
+
+        springDataDao.save(servant1);
+
+        return null;
     }
 
     @Override
@@ -115,7 +128,7 @@ public class ServantServiceImpl implements ServantService {
             throw new ServantNotFound("Error with the id");
         }
 
-        return findServantDto(servantDto);
+        return findServantDto(null);
     }
 
     @Override
@@ -130,29 +143,29 @@ public class ServantServiceImpl implements ServantService {
         Servant servant = optionalServant.
                 orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND WITH ID " + idServant));
 
+        System.out.println(servant);
         springDataDao.delete(servant);
+        springDataDao.deleteById(idServant);
     }
 
-    private ServantDto findServantDto(ServantDto servantDto) {
+    private ServantDto findServantDto(Servant s) {
 
         try {
 
-            Servant servant = new Servant(servantDto.idServant(),
-                    servantDto.nameServant(), servantDto.noblePhantasm());
+            /*Classes classes = new Classes(s.getServantClass().getIdClass(), s.getServantClass().getClassName());
+            CardTypes lettersTypes = new CardTypes(s.getLettersTypes().getIdLetter(), s.getLettersTypes().getLetterType());
+
+            Servant servant = Servant.builder()
+                    .idServant(s.getIdServant()).nameServant(s.getNameServant())
+                    .noblePhantasm(s.getNoblePhantasm()).servantClass(classes)
+                    .lettersTypes(lettersTypes).build();
+
 
             servant = springDataDao.save(servant);
 
-            int servantId = servant.getIdServant();
-
-            servantDao.saveServantClass(Integer.parseInt(servantDto.servantClass()), servantId);
-            servantDao.saveServanTypes(Integer.parseInt(servantDto.letterType()), servantId);
-
-            int idClasses = servantDao.findServantClass(servantId);
-
-            int idLetters = servantDao.findServantType(servantId);
-
-            return new ServantDto(servantId, servant.getNameServant(), servant.getNoblePhantasm(), String.valueOf(idClasses),
-                    String.valueOf(idLetters));
+            return new ServantDto(servant.getIdServant(), servant.getNameServant(), servant.getNoblePhantasm(), servant.getServantClass().getClassName(),
+                    servant.getLettersTypes().getLetterType());*/
+            return null;
 
         } catch (ErrorPersistence dnf) {
             throw new ErrorPersistence("ERROR SERVER");

@@ -36,10 +36,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth
-                            .requestMatchers(HttpMethod.GET, "/api/servants",
+                            .requestMatchers(HttpMethod.GET, "/api/hello", "/api/servants").hasRole("REGULAR")
+                            .requestMatchers(HttpMethod.POST, "/api/save-servant").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN");
+                            /*.requestMatchers(HttpMethod.GET, "/api/servants",
                                     "/api/servant/**").permitAll()
                             .anyRequest()
-                            .authenticated();
+                            .authenticated();*/
                 });
 
         httpSecurity.httpBasic(Customizer.withDefaults());

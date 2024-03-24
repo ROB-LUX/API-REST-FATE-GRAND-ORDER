@@ -1,8 +1,13 @@
 package com.japrova.fategrandorder.dao;
 
 import com.japrova.fategrandorder.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface UserDao {
+import java.util.Optional;
 
-    User findByUserName(String theUserName);
+public interface UserDao extends JpaRepository<User, Integer> {
+
+    @Query(value = "FROM User WHERE userName=:uName AND enabled=true")
+    Optional<User> findByUserName(String uName);
 }

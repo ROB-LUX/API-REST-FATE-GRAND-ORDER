@@ -1,13 +1,11 @@
 package com.japrova.fategrandorder.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "role")
-@Getter @Setter @NoArgsConstructor
+@Table(name = "roles")
+@Getter @Setter @NoArgsConstructor @ToString
 public class Role {
 
     @Id
@@ -17,5 +15,4 @@ public class Role {
 
     @Column(name = "name")
     private String name;
-
 }

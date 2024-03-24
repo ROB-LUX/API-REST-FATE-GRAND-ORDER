@@ -1,43 +1,32 @@
 package com.japrova.fategrandorder.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "servants")
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @Builder @AllArgsConstructor @ToString(exclude = "cardTypes")
 public class Servant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_servant")
+    @Column(name = "id")
     private int idServant;
 
-    @Column(name = "name_servant")
+    @Column(name = "servant")
     private String nameServant;
 
     @Column(name = "noble_phantasm")
     private String noblePhantasm;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "classes_servants",
-            joinColumns = @JoinColumn(name = "id_servant"),
-            inverseJoinColumns = @JoinColumn(name = "id_class"))
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "class")
     private Classes servantClass;
 
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "servants_types",
-            joinColumns = @JoinColumn(name = "id_servant"),
-            inverseJoinColumns = @JoinColumn(name = "letter_type"))
-    private LettersTypes lettersTypes;
-
-    public Servant(int idServant, String nameServant, String noblePhantasm) {
-        this.idServant = idServant;
-        this.nameServant = nameServant;
-        this.noblePhantasm = noblePhantasm;
-    }
-
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinTable(name = "servant_card", joinColumns = @JoinColumn(name = "servant_id"),
+            inverseJoinColumns = @JoinColumn(name = "card_id"))
+    private Set<CardTypes> cardTypes;
 }

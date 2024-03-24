@@ -23,7 +23,7 @@ public class ServantRestController {
         return servantService.findAllServants();
     }
 
-    @GetMapping("/servant/{name}")
+    @GetMapping("/servant/{card}")
     public ServantDto findServantByName(@PathVariable String name) {
         return servantService.findByName(name);
     }
@@ -34,7 +34,7 @@ public class ServantRestController {
         return Arrays.asList(servantService.findAllLetters(), servantService.findAllClasses());
     }
 
-    @PostMapping("/saveServant")
+    @PostMapping("/save-servant")
     public ServantDto saveServant(@RequestBody ServantDto servant) {
 
         return servantService.saveServant(servant);
@@ -46,9 +46,14 @@ public class ServantRestController {
         return servantService.updateServant(servant);
     }
 
-    @DeleteMapping("/deleteServant/{idServant}")
+    @DeleteMapping("/{idServant}")
     public void deleteServant(@PathVariable int idServant) {
 
         servantService.deleteServant(idServant);
+    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello word";
     }
 }
