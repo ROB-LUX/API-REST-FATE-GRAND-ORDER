@@ -1,5 +1,10 @@
 package com.japrova.fategrandorder.entity.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ClassesEnum {
 
     SABER(1, "Saber"), ARCHER(2, "Archer"), LANCER(3, "Lancer"),
@@ -9,17 +14,4 @@ public enum ClassesEnum {
 
     private final int id;
     private final String className;
-
-    ClassesEnum(int id, String className) {
-        this.id = id;
-        this.className = className;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getClassName() {
-        return className;
-    }
 }

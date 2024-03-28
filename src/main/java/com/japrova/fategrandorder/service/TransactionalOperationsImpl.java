@@ -4,7 +4,7 @@ import com.japrova.fategrandorder.dao.*;
 import com.japrova.fategrandorder.dto.CardTypeDto;
 import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.*;
-import com.japrova.fategrandorder.entity.enums.CardTypesEnum;
+import com.japrova.fategrandorder.entity.enums.CardTypeEnum;
 import com.japrova.fategrandorder.entity.enums.ClassesEnum;
 import com.japrova.fategrandorder.exceptions.*;
 import org.springframework.stereotype.Service;
@@ -28,35 +28,28 @@ public class TransactionalOperationsImpl implements ITransactionalOperations {
 
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ServantDto saveServant(final ServantDto servantDto) {
 
         final String idCards = servantDto.cardTypeDto().toString();
 
-        Set<CardTypes> cardTypes = springDataDao.findAllCardTypes().stream()
-                .filter(c -> {
-                    String card = String.valueOf(c.getIdCard());
+        Map<String, Object> objectMap = findCardAndClass(Integer.parseInt(servantDto.servantClass()), idCards);
 
-
-                    return idCards.contains(card);
-                })
-                .collect(Collectors.toSet());
+        ClassesEnum classesEnum = (ClassesEnum) objectMap.get("classes");
+        Set<CardTypes> cardTypes = (Set<CardTypes>) objectMap.get("cardsSet");
 
         Servant servant = Servant.builder()
                 .nameServant(servantDto.nameServant())
                 .noblePhantasm(servantDto.noblePhantasm())
-                .servantClass(new Classes(Integer.parseInt(servantDto.servantClass()), servantDto.servantClass()))
+                .servantClass(new Classes(classesEnum.getId(), classesEnum.getClassName()))
                 .cardTypes(cardTypes)
                 .build();
 
         servant = springDataDao.save(servant);
 
-        System.out.println(servant.getServantClass().getIdClass() + " " + servant.getServantClass().getNameClass());
-        ServantDto servDto = new ServantDto(servant.getIdServant(), servant.getNameServant(), servant.getNoblePhantasm(),
-                servant.getServantClass().getNameClass(), servant.getCardTypes().stream()
+        return new ServantDto(servant.getIdServant(), servant.getNameServant(), servant.getNoblePhantasm(),
+                classesEnum.getClassName(), servant.getCardTypes().stream()
                 .map(c -> new CardTypeDto(c.getCardName())).toList());
-
-        return servDto;
     }
 
     @Override
@@ -70,41 +63,27 @@ public class TransactionalOperationsImpl implements ITransactionalOperations {
             throw new ServantNotFound("Error with the id");
         }
         Servant existingServant = springDataDao.findById(idServant)
-                .orElseThrow(() -> new ServantNotFound("No se encontró ningún Servant con el ID proporcionado: " + idServant));
+                .orElseThrow(() -> new ServantNotFound("NO SERVANT FOUND WITH ID: " + idServant));
 
-        Optional<ClassesEnum> classesEnum = Arrays.stream(ClassesEnum.values())
-                .filter(classes -> classes.getId() == Integer.parseInt(servantDto.servantClass()))
-                .findFirst();
+        final String idCards = servantDto.cardTypeDto().toString();
 
-        if (classesEnum.isPresent()) {
-            ClassesEnum c = classesEnum.get();
+        Map<String, Object> objectMap = findCardAndClass(Integer.parseInt(servantDto.servantClass()), idCards);
 
-            existingServant.setNameServant(servantDto.nameServant());
-            existingServant.setNoblePhantasm(servantDto.noblePhantasm());
-            existingServant.setServantClass(new Classes(c.getId(), c.getClassName()));
-        }
+        ClassesEnum classesEnum = (ClassesEnum) objectMap.get("classes");
+        Set<CardTypes> cardTypes = (Set<CardTypes>) objectMap.get("cardsSet");
 
-        String content = servantDto.cardTypeDto().toString();
-
-        Set<CardTypes> cardTypes = springDataDao.findAllCardTypes().stream()
-                .filter(c -> {
-                    String card = String.valueOf(c.getIdCard());
-
-
-                    return content.contains(card);
-                })
-                .collect(Collectors.toSet());
-
+        existingServant.setIdServant(idServant);
+        existingServant.setNameServant(servantDto.nameServant());
+        existingServant.setNoblePhantasm(servantDto.noblePhantasm());
+        existingServant.setServantClass(new Classes(classesEnum.getId(), classesEnum.getClassName()));
         existingServant.setCardTypes(cardTypes);
 
         existingServant = springDataDao.save(existingServant);
 
 
-        ServantDto servDto = new ServantDto(existingServant.getIdServant(), existingServant.getNameServant(), existingServant.getNoblePhantasm(),
+        return new ServantDto(existingServant.getIdServant(), existingServant.getNameServant(), existingServant.getNoblePhantasm(),
                 existingServant.getServantClass().getNameClass(), existingServant.getCardTypes().stream()
                 .map(c -> new CardTypeDto(c.getCardName())).toList());
-
-        return servDto;
     }
 
     @Override
@@ -115,13 +94,29 @@ public class TransactionalOperationsImpl implements ITransactionalOperations {
             throw new ServantNotFound("Error with the id");
         }
 
+        springDataDao.findById(idServant)
+                .orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND WITH ID " + idServant));
+
         servantDao.deleteServant(idServant);
+    }
 
-        /*Optional<Servant> optionalServant = springDataDao.findById(idServant);
+    private Map<String, Object> findCardAndClass(int idClass, String cardTypes) {
 
-        Servant servant = optionalServant.
-                orElseThrow(() -> new ServantNotFound("SERVANT NOT FOUND WITH ID " + idServant));*/
+        Set<CardTypes> cardSet = springDataDao.findAllCardTypes().stream()
+                .filter(c -> {
+                    String card = String.valueOf(c.getIdCard());
+                    return cardTypes.contains(card);
+                })
+                .collect(Collectors.toSet());
 
+        ClassesEnum classesEnum = Arrays.stream(ClassesEnum.values())
+                .filter(classes -> classes.getId() == idClass)
+                .findFirst().orElseThrow(() -> new ErrorPersistence("WRONG CLASS"));
 
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("cardsSet", cardSet);
+        objectMap.put("classes", classesEnum);
+
+        return objectMap;
     }
 }

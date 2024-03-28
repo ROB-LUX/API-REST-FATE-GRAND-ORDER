@@ -4,8 +4,6 @@ import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.*;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ErrorPersistence;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,7 +13,6 @@ public class FateGoRepository implements FateGoDao {
 
     private final EntityManager entityManager;
 
-    @Autowired
     public FateGoRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

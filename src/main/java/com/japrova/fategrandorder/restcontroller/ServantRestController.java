@@ -3,7 +3,6 @@ package com.japrova.fategrandorder.restcontroller;
 import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.service.IObtainingData;
 import com.japrova.fategrandorder.service.ITransactionalOperations;
-import com.japrova.fategrandorder.service.TransactionalOperationsImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;

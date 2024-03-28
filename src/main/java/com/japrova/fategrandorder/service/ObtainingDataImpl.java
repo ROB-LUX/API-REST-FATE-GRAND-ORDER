@@ -15,8 +15,8 @@ import java.util.Optional;
 @Service
 public class ObtainingDataImpl implements IObtainingData {
 
-    private SpringDataDao springDataDao;
-    private FateGoDao repositoryFgo;
+    private final SpringDataDao springDataDao;
+    private final FateGoDao repositoryFgo;
 
     public ObtainingDataImpl(SpringDataDao springDataDao, FateGoDao repositoryFgo) {
         this.springDataDao = springDataDao;
