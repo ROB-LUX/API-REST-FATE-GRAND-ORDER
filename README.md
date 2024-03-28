@@ -7,7 +7,7 @@ With a MySQL DBMS
 Con una SGBD MySQL
 
 
-::: ROUTES :::
+::: ENDPOINTS :::
 
 English.
 
