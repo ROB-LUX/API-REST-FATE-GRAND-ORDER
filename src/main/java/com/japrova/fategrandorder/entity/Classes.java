@@ -5,7 +5,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "classes")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Classes {
 
     @Id
@@ -14,6 +14,6 @@ public class Classes {
     private int idClass;
 
     @Column(name = "class")
-    private String className;
+    private String nameClass;
 
 }

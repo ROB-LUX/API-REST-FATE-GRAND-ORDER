@@ -11,4 +11,6 @@ public interface FateGoDao {
     int findServantType(int id);
     int findServantClass(int idServant);
 
+    void deleteServant(int idServant);
+
 }

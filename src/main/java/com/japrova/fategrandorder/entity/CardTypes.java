@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "card_type")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class CardTypes {
 
     @Id
@@ -25,5 +25,10 @@ public class CardTypes {
     public CardTypes(int idCard, String cardName) {
         this.idCard = idCard;
         this.cardName = cardName;
+    }
+
+    @Override
+    public String toString() {
+        return cardName;
     }
 }

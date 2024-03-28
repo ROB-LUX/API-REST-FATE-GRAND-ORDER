@@ -1,8 +1,9 @@
 package com.japrova.fategrandorder.restcontroller;
 
 import com.japrova.fategrandorder.dto.ServantDto;
-import com.japrova.fategrandorder.entity.*;
-import com.japrova.fategrandorder.service.ServantServiceImpl;
+import com.japrova.fategrandorder.service.IObtainingData;
+import com.japrova.fategrandorder.service.ITransactionalOperations;
+import com.japrova.fategrandorder.service.TransactionalOperationsImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -11,28 +12,30 @@ import java.util.*;
 @RequestMapping("/api")
 public class ServantRestController {
 
-    private final ServantServiceImpl servantService;
+    private final ITransactionalOperations servantService;
 
-    public ServantRestController(ServantServiceImpl servantService) {
-        this.servantService = servantService;
+    private final IObtainingData obtainingData;
+    public ServantRestController(ITransactionalOperations operations, IObtainingData obtainingData) {
+        this.servantService = operations;
+        this.obtainingData = obtainingData;
     }
 
     @GetMapping("/servants")
     public List<ServantDto> findAllServants() {
 
-        return servantService.findAllServants();
+        return obtainingData.findAllServants();
     }
 
-    @GetMapping("/servant/{card}")
+    @GetMapping("/servant/{name}")
     public ServantDto findServantByName(@PathVariable String name) {
-        return servantService.findByName(name);
+        return obtainingData.findServantByName(name);
     }
 
-    @GetMapping("/findAll")
+    /*@GetMapping("/findAll")
     public List<Object> findClassesLetters() {
 
         return Arrays.asList(servantService.findAllLetters(), servantService.findAllClasses());
-    }
+    }*/
 
     @PostMapping("/save-servant")
     public ServantDto saveServant(@RequestBody ServantDto servant) {
@@ -46,14 +49,9 @@ public class ServantRestController {
         return servantService.updateServant(servant);
     }
 
-    @DeleteMapping("/{idServant}")
+    @DeleteMapping("/delete-servant/{idServant}")
     public void deleteServant(@PathVariable int idServant) {
 
         servantService.deleteServant(idServant);
-    }
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello word";
     }
 }

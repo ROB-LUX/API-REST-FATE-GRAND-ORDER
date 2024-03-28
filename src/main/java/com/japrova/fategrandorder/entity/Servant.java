@@ -3,11 +3,12 @@ package com.japrova.fategrandorder.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "servants")
-@Getter @Setter @NoArgsConstructor @Builder @AllArgsConstructor @ToString(exclude = "cardTypes")
+@Getter @Setter @NoArgsConstructor @Builder @AllArgsConstructor @ToString
 public class Servant {
 
     @Id

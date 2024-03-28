@@ -1,5 +1,6 @@
 package com.japrova.fategrandorder.dao;
 
+import com.japrova.fategrandorder.exceptions.ServantNotFound;
 import jakarta.persistence.*;
 import com.japrova.fategrandorder.entity.Servant;
 import com.japrova.fategrandorder.exceptions.ErrorPersistence;
@@ -21,10 +22,10 @@ public class FateGoRepository implements FateGoDao {
 
     public Optional<Servant> findServantByName(String name) {
 
-        String hql = "FROM Servant WHERE nameServant = :nameParam";
+        final String HQL = "FROM Servant WHERE nameServant = :nameParam";
 
         TypedQuery<Servant> servantTypedQuery = entityManager
-                .createQuery(hql, Servant.class);
+                .createQuery(HQL, Servant.class);
 
         servantTypedQuery.setParameter("nameParam", name);
 
@@ -74,6 +75,27 @@ public class FateGoRepository implements FateGoDao {
 
         } catch (PersistenceException dnf) {
             throw new ErrorPersistence("SERVER ERROR");
+        }
+    }
+
+    @Override
+    public void deleteServant(int idServant) {
+
+        Servant servant = entityManager.find(Servant.class, idServant);
+
+
+        if (servant != null) {
+            Query queryNative = entityManager.createNativeQuery("DELETE FROM servants WHERE id=:theId");
+
+            try {
+                queryNative.setParameter("theId", idServant);
+                queryNative.executeUpdate();
+
+            } catch (Exception ex) {
+                System.out.println("No se pudo controlar");
+            }
+        } else {
+            throw new ServantNotFound("SERVANT NOT FOUND");
         }
     }
 }

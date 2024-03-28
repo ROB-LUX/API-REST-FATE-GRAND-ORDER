@@ -11,15 +11,12 @@ import java.util.Set;
 
 public interface SpringDataDao extends JpaRepository<Servant, Integer> {
 
-    @Query("FROM CardTypes")
+    @Query("FROM CardTypesEnum")
     List<CardTypes> findAllLetters();
 
     @Query("FROM Classes")
     List<Classes> findAllClasses();
 
-    @Query("FROM Servant")
-    List<Servant> findAllServants();
-
-    @Query("FROM CardTypes")
+    @Query("FROM CardTypesEnum")
     Set<CardTypes> findAllCardTypes();
 }
