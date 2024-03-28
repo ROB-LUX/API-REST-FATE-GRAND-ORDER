@@ -8,9 +8,6 @@ public interface FateGoDao {
 
     Optional<Servant> findServantByName(String nameServant);
 
-    int findServantType(int id);
-    int findServantClass(int idServant);
-
     void deleteServant(int idServant);
 
 }

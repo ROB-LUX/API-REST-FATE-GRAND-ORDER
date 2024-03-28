@@ -4,7 +4,6 @@ import com.japrova.fategrandorder.dao.*;
 import com.japrova.fategrandorder.dto.CardTypeDto;
 import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.entity.*;
-import com.japrova.fategrandorder.entity.enums.CardTypeEnum;
 import com.japrova.fategrandorder.entity.enums.ClassesEnum;
 import com.japrova.fategrandorder.exceptions.*;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class TransactionalOperationsImpl implements ITransactionalOperations {
 
         return new ServantDto(servant.getIdServant(), servant.getNameServant(), servant.getNoblePhantasm(),
                 classesEnum.getClassName(), servant.getCardTypes().stream()
-                .map(c -> new CardTypeDto(c.getCardName())).toList());
+                .map(c -> new CardTypeDto(c.getIdCard(), c.getCardName())).toList());
     }
 
     @Override
@@ -83,7 +82,7 @@ public class TransactionalOperationsImpl implements ITransactionalOperations {
 
         return new ServantDto(existingServant.getIdServant(), existingServant.getNameServant(), existingServant.getNoblePhantasm(),
                 existingServant.getServantClass().getNameClass(), existingServant.getCardTypes().stream()
-                .map(c -> new CardTypeDto(c.getCardName())).toList());
+                .map(c -> new CardTypeDto(c.getIdCard(), c.getCardName())).toList());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.japrova.fategrandorder.restcontroller;
 
+import com.japrova.fategrandorder.dto.CardTypeDto;
+import com.japrova.fategrandorder.dto.ClassDto;
 import com.japrova.fategrandorder.dto.ServantDto;
 import com.japrova.fategrandorder.service.IObtainingData;
 import com.japrova.fategrandorder.service.ITransactionalOperations;
@@ -30,11 +32,16 @@ public class ServantRestController {
         return obtainingData.findServantByName(name);
     }
 
-    /*@GetMapping("/findAll")
-    public List<Object> findClassesLetters() {
+    @GetMapping("/findClasses")
+    public Set<ClassDto> findClasses() {
 
-        return Arrays.asList(servantService.findAllLetters(), servantService.findAllClasses());
-    }*/
+        return obtainingData.findClasses();
+    }
+
+    @GetMapping("/findCards")
+    public Set<CardTypeDto> findCardsType() {
+        return obtainingData.findCardsType();
+    }
 
     @PostMapping("/save-servant")
     public ServantDto saveServant(@RequestBody ServantDto servant) {

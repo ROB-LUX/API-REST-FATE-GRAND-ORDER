@@ -36,46 +36,6 @@ public class FateGoRepository implements FateGoDao {
     }
 
     @Override
-    public int findServantType(int idServant) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM servants_types WHERE id_servant = ?");
-        query.setParameter(1, idServant);
-
-        Object[] result = (Object[]) query.getSingleResult();
-
-        return (int) result[0];
-
-    }
-
-    @Override
-    public int findServantClass(int idServant) {
-
-        Query query = entityManager.createNativeQuery("SELECT * FROM classes_servants WHERE id_servant = ?");
-        query.setParameter(1, idServant);
-
-
-        Object[] result = (Object[]) query.getSingleResult();
-
-        return (int) result[0];
-    }
-
-    private void queryNative(String sql, int idLetterOrClass, int idServant) {
-
-        Query queryNative = entityManager
-                .createNativeQuery(sql);
-
-        queryNative.setParameter(1, idLetterOrClass);
-        queryNative.setParameter(2, idServant);
-
-        try {
-
-            queryNative.executeUpdate();
-
-        } catch (PersistenceException dnf) {
-            throw new ErrorPersistence("SERVER ERROR");
-        }
-    }
-
-    @Override
     public void deleteServant(int idServant) {
 
         Servant servant = entityManager.find(Servant.class, idServant);
